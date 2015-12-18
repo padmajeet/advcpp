@@ -28,10 +28,13 @@ public:
 	virtual unique_ptr<IteratorInterface> end() = 0; // virtaul tells the compiler not to do early binding
 };
 
-unique_ptr<CollectionInterface> GetObject(); // declaration
+unique_ptr<CollectionInterface> GetObject(int select); // declaration
 int main()
 {
-	unique_ptr<CollectionInterface> collection = GetObject(); // either hold address myarray object or mylinkedlist object
+        //1 for mylinked list , other value is for myarray
+	unique_ptr<CollectionInterface> collection = GetObject(1); // either hold address myarray object or mylinkedlist object,
+	unique_ptr<CollectionInterface> collectionArray = GetObject(0); // either hold address myarray object or mylinkedlist object
+        
 	for (auto beginit = collection->begin(); beginit->operator != ( collection->end().get() ); beginit->operator++() )
 		cout << beginit->operator*() << endl;
 
@@ -65,12 +68,12 @@ int main()
 &myarray::begin() // offset : 0
 &myarray::end() // offset : 4
 */
-class myarraydjfkdsjkfjskdljfksdjkfjdskfjskdjfkdsj : public CollectionInterface
+class myarray : public CollectionInterface
 {
 private:
 	int items[3];
 public:
-	myarraydjfkdsjkfjskdljfksdjkfjdskfjskdjfkdsj() //: vptr ( &myarray vtable) { }
+	myarray() //: vptr ( &myarray vtable) { }
 	{
 		items[0] = 1; items[1] = 2; items[2] = 3;
 	}
@@ -78,9 +81,9 @@ public:
 	class iterator : public IteratorInterface
 	{
 		int _index;
-		myarraydjfkdsjkfjskdljfksdjkfjdskfjskdjfkdsj *_arr;
+		myarray *_arr;
 	public:
-		iterator(int index, myarraydjfkdsjkfjskdljfksdjkfjdskfjskdjfkdsj *arr = nullptr) : _index(index), _arr(arr) { }
+		iterator(int index, myarrayd *arr = nullptr) : _index(index), _arr(arr) { }
 
 		bool operator != (const IteratorInterface* endit) override 
 		{ 
@@ -160,7 +163,13 @@ public:
 	}
 };
 
-unique_ptr<CollectionInterface> GetObject()
+//we can make it choose between linkedlist and myarray
+//if select is having value 1 then mylinkedlist interface will be choosed
+//else myarray
+unique_ptr<CollectionInterface> GetObject(int select)
 {
-	return unique_ptr<CollectionInterface>(new mylinkedlist());
+        if(select == 1)
+	    return unique_ptr<CollectionInterface>(new mylinkedlist());
+        else
+	    return unique_ptr<CollectionInterface>(new myArray());
 }
